@@ -1,0 +1,29 @@
+# Task Plan: Create NJADWAL v2 Project
+
+- [x] Check [NJADWAL_v2_MASTER.md](file:///home/timot/storage/Autoable/njadwal-project/NJADWAL_v2_MASTER.md) for all file definitions (denoted by `## 📄 <filepath>`)
+- [x] Write a script to automatically extract and scaffold the defined files and directories
+- [x] Run `npm install` for dependencies
+- [x] Verify the project builds correctly (Next.js build succeeded, but many pages are missing)
+
+## Remaining Features to Implement (Not provided in Master Guide code blocks)
+
+### Authentication & Base
+- [ ] Implement `app/page.tsx` (Marketing Landing Page)
+- [ ] Implement [app/(auth)/login/page.tsx](file:///home/timot/storage/Autoable/njadwal-project/app/%28auth%29/login/page.tsx) (Google + email setup)
+- [ ] Implement [app/(auth)/register/page.tsx](file:///home/timot/storage/Autoable/njadwal-project/app/%28auth%29/register/page.tsx)
+- [ ] Implement [app/auth/callback/route.ts](file:///home/timot/storage/Autoable/njadwal-project/app/auth/callback/route.ts)
+- [ ] Implement `middleware.ts` (protect routes)
+
+### Merchant Dashboard
+- [ ] Implement `app/(dashboard)/layout.tsx` & Sidebar
+- [ ] Implement `app/(dashboard)/dashboard/page.tsx` (Stats)
+- [ ] Implement `app/(dashboard)/settings/page.tsx`
+- [ ] Implement `app/(dashboard)/services/page.tsx` (Add/Edit forms)
+- [ ] Implement `app/(dashboard)/schedule/page.tsx`
+- [ ] Implement `app/(dashboard)/bookings/page.tsx`
+- [ ] Implement `app/(dashboard)/staff/page.tsx`
+
+### Public Booking Flow
+- [ ] Implement `app/book/[slug]/page.tsx`
+- [ ] Implement `components/booking/ServicePicker.tsx`
+- [ ] Implement `components/booking/DateTimePicker.tsx`

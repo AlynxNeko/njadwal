@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Njadwal — Jadwalkan Lebih Cerdas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --white: #ffffff;
+            --off-white: #f9f8f6;
+            --surface: #f4f3f0;
+            --border: #e8e6e1;
+            --border-light: #f0eeea;
+            --text-primary: #1a1917;
+            --text-secondary: #6b6860;
+            --text-muted: #a09d98;
+            --accent: #1a1917;
+            --accent-green: #2d6a4f;
+            --green-light: #e8f5ee;
+            --green-mid: #b7dfc8;
+            --wa-green: #25D366;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            background: var(--white);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 2rem;
+        }
+
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+
+        .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 22px;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.3px;
+        }
+
+        .logo span {
+            color: var(--accent-green);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 400;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-cta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-ghost {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+            text-decoration: none;
+            padding: 7px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            transition: background 0.2s;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            background: none;
+        }
+
+        .btn-ghost:hover {
+            background: var(--surface);
+        }
+
+        .btn-primary {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--white);
+            background: var(--text-primary);
+            border: none;
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.85;
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            padding: 100px 2rem 80px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--green-light);
+            color: var(--accent-green);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 5px 14px;
+            border-radius: 100px;
+            border: 1px solid var(--green-mid);
+            margin-bottom: 2rem;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(42px, 7vw, 72px);
+            line-height: 1.08;
+            letter-spacing: -2px;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent-green);
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            max-width: 520px;
+            margin: 0 auto 2.5rem;
+            font-weight: 300;
+        }
+
+        .hero-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--white);
+            background: var(--text-primary);
+            padding: 13px 28px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            transition: opacity 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-hero:hover {
+            opacity: 0.85;
+        }
+
+        .btn-hero-ghost {
+            font-size: 15px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            background: none;
+            border: 1px solid var(--border);
+            padding: 13px 28px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-hero-ghost:hover {
+            background: var(--surface);
+            color: var(--text-primary);
+        }
+
+        .hero-note {
+            margin-top: 1rem;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ─── HERO VISUAL ─── */
+        .hero-visual-wrap {
+            max-width: 900px;
+            margin: 0 auto 0;
+            padding: 0 2rem;
+        }
+
+        .hero-visual {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(45, 106, 79, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .booking-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+        }
+
+        .booking-card-title {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 14px;
+        }
+
+        .booking-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .av-g {
+            background: var(--green-light);
+            color: var(--accent-green);
+        }
+
+        .av-b {
+            background: #eef1fb;
+            color: #3b5bdb;
+        }
+
+        .av-o {
+            background: #fff3e8;
+            color: #c26a0b;
+        }
+
+        .booking-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .booking-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .slot {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            padding: 7px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .slot:hover,
+        .slot.active {
+            background: var(--text-primary);
+            color: var(--white);
+            border-color: var(--text-primary);
+        }
+
+        .slot.booked {
+            background: var(--surface);
+            color: var(--border);
+            cursor: not-allowed;
+        }
+
+        .stat-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stat-box {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .stat-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .wa-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #e8faf0;
+            border: 1px solid #b7dfc8;
+            border-radius: 100px;
+            padding: 3px 10px;
+            font-size: 11px;
+            color: var(--accent-green);
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .wa-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--wa-green);
+            border-radius: 50%;
+        }
+
+        .booking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .booking-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+        }
+
+        .booking-row .name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .booking-row .time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .s-green {
+            background: #22c55e;
+        }
+
+        .s-amber {
+            background: #f59e0b;
+        }
+
+        .s-gray {
+            background: #d1d5db;
+        }
+
+        /* ─── LOGOS ─── */
+        .logos-section {
+            padding: 48px 2rem;
+            text-align: center;
+        }
+
+        .logos-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .logos-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .logo-item {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: -0.3px;
+        }
+
+        /* ─── FEATURES ─── */
+        .features-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 2rem;
+        }
+
+        .section-eyebrow {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(32px, 4vw, 48px);
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .section-title em {
+            font-style: italic;
+            color: var(--accent-green);
+        }
+
+        .section-sub {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            max-width: 480px;
+            line-height: 1.65;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--off-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            transition: border-color 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: #c5c2ba;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 18px;
+        }
+
+        .feature-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .feature-card.accent {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+        }
+
+        .feature-card.accent h3 {
+            color: var(--white);
+        }
+
+        .feature-card.accent p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .feature-card.accent .feature-icon {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ─── HOW IT WORKS ─── */
+        .how-section {
+            background: var(--off-white);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 80px 2rem;
+        }
+
+        .how-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .step {
+            padding: 0 24px;
+            border-right: 1px solid var(--border);
+        }
+
+        .step:last-child {
+            border-right: none;
+        }
+
+        .step:first-child {
+            padding-left: 0;
+        }
+
+        .step-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 48px;
+            color: var(--border);
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .step h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .step p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* ─── PRICING ─── */
+        .pricing-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 2rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            background: var(--white);
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+        }
+
+        .pricing-card.featured * {
+            --text-primary: #fff;
+        }
+
+        .plan-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .featured .plan-badge {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .plan-price {
+            font-family: 'DM Serif Display', serif;
+            font-size: 38px;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .featured .plan-price {
+            color: var(--white);
+        }
+
+        .plan-period {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-top: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .featured .plan-period {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .plan-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .featured .plan-desc {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .plan-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .featured .plan-features li {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .check {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            color: var(--accent-green);
+        }
+
+        .featured .check {
+            color: #4ade80;
+        }
+
+        .plan-cta {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 11px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .plan-cta-outline {
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            background: none;
+        }
+
+        .plan-cta-outline:hover {
+            background: var(--surface);
+        }
+
+        .plan-cta-solid {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .plan-cta-solid:hover {
+            opacity: 0.9;
+        }
+
+        .popular-tag {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-green);
+            color: white;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 14px;
+            border-radius: 100px;
+        }
+
+        .topup-note {
+            margin-top: 1rem;
+            background: var(--green-light);
+            border: 1px solid var(--green-mid);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topup-note p {
+            font-size: 13px;
+            color: var(--accent-green);
+            font-weight: 400;
+        }
+
+        .topup-note p strong {
+            font-weight: 600;
+        }
+
+        /* ─── SOCIAL PROOF ─── */
+        .proof-section {
+            background: var(--off-white);
+            border-top: 1px solid var(--border);
+            padding: 80px 2rem;
+        }
+
+        .proof-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .proof-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 3rem;
+        }
+
+        .proof-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .proof-stars {
+            color: #f59e0b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .proof-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.65;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .proof-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .proof-av {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .proof-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .proof-biz {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ─── CTA BANNER ─── */
+        .cta-section {
+            padding: 80px 2rem;
+            text-align: center;
+        }
+
+        .cta-inner {
+            max-width: 680px;
+            margin: 0 auto;
+            background: var(--text-primary);
+            border-radius: var(--radius-xl);
+            padding: 64px 48px;
+        }
+
+        .cta-inner h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(28px, 4vw, 42px);
+            letter-spacing: -1px;
+            line-height: 1.1;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .cta-inner p {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-white {
+            background: var(--white);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            transition: opacity 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-white:hover {
+            opacity: 0.9;
+        }
+
+        .btn-outline-white {
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 400;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            background: none;
+            transition: background 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-outline-white:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 40px 2rem;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .footer-logo span {
+            color: var(--accent-green);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .footer-links a {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-copy {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 900px) {
+            .features-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+            }
+
+            .step {
+                border-right: none;
+                padding: 0;
+            }
+
+            .proof-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-visual {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-inner {
+                padding: 40px 24px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .hero {
+                padding: 72px 1.5rem 60px;
+            }
+
+            .hero-visual-wrap {
+                padding: 0 1rem;
+            }
+        }
+
+        /* ─── ANIMATIONS ─── */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .hero h1 {
+            animation: fadeUp 0.5s 0.1s ease both;
+        }
+
+        .hero p {
+            animation: fadeUp 0.5s 0.2s ease both;
+        }
+
+        .hero-buttons {
+            animation: fadeUp 0.5s 0.3s ease both;
+        }
+
+        .hero-note {
+            animation: fadeUp 0.5s 0.4s ease both;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-inner">
+            <a href="#" class="logo">Njadwal<span>.</span></a>
+            <ul class="nav-links">
+                <li><a href="#fitur">Fitur</a></li>
+                <li><a href="#cara-kerja">Cara Kerja</a></li>
+                <li><a href="#harga">Harga</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="/auth" class="btn-ghost">Masuk</a>
+                <a href="/auth?signup=true" class="btn-primary">Coba Gratis</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            Dibuat untuk UMKM Indonesia
+        </div>
+        <h1>Jadwalkan lebih <em>cerdas,</em><br>tanpa ribet</h1>
+        <p>Platform booking otomatis yang terhubung ke WhatsApp, QRIS, dan Google Kalender — khusus untuk barbershop,
+            klinik kecantikan, dan studio di Indonesia.</p>
+        <div class="hero-buttons">
+            <a href="/auth?signup=true" class="btn-hero">Mulai Gratis 14 Hari</a>
+            <a href="#cara-kerja" class="btn-hero-ghost">Lihat cara kerja →</a>
+        </div>
+        <p class="hero-note">Tidak perlu kartu kredit · Setup kurang dari 10 menit</p>
+    </section>
+
+    <!-- HERO VISUAL -->
+    <div class="hero-visual-wrap">
+        <div class="hero-visual">
+            <!-- Booking widget mockup -->
+            <div class="booking-card">
+                <div class="booking-card-title">Pilih jadwal kamu</div>
+                <div class="booking-header">
+                    <div class="avatar av-g">BB</div>
+                    <div>
+                        <div class="booking-name">Barber Budi</div>
+                        <div class="booking-sub">Potong rambut · 60 mnt</div>
+                    </div>
+                </div>
+                <div class="slot-grid">
+                    <div class="slot">09:00</div>
+                    <div class="slot booked">09:30</div>
+                    <div class="slot">10:00</div>
+                    <div class="slot active">10:30</div>
+                    <div class="slot booked">11:00</div>
+                    <div class="slot">11:30</div>
+                    <div class="slot">13:00</div>
+                    <div class="slot">13:30</div>
+                    <div class="slot booked">14:00</div>
+                </div>
+                <div style="margin-top: 14px;">
+                    <div class="wa-pill"><span class="wa-dot"></span> Konfirmasi otomatis via WhatsApp</div>
+                </div>
+            </div>
+
+            <!-- Stats side -->
+            <div class="stat-row">
+                <div class="stat-box">
+                    <div class="stat-label">Booking hari ini</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-sub">+3 dari kemarin</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">WA terkirim bulan ini</div>
+                    <div class="stat-value">47<span
+                            style="font-size:14px;font-weight:400;color:var(--text-muted)">/50</span></div>
+                    <div
+                        style="margin-top: 8px; background: var(--surface); border-radius: 100px; height: 4px; overflow: hidden;">
+                        <div style="width: 94%; height: 100%; background: var(--accent-green); border-radius: 100px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-box" style="flex: 1;">
+                    <div class="stat-label">Jadwal terbaru</div>
+                    <div class="booking-list">
+                        <div class="booking-row">
+                            <span class="status-dot s-green"></span>
+                            <span class="name">Rizky A.</span>
+                            <span class="time">10:30</span>
+                        </div>
+                        <div class="booking-row">
+                            <span class="status-dot s-amber"></span>
+                            <span class="name">Dimas P.</span>
+                            <span class="time">13:00</span>
+                        </div>
+                        <div class="booking-row">
+                            <span class="status-dot s-gray"></span>
+                            <span class="name">Fajar K.</span>
+                            <span class="time">14:30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGOS -->
+    <div class="logos-section">
+        <p class="logos-label">Bekerja sama dengan</p>
+        <div class="logos-row">
+            <span class="logo-item">Xendit</span>
+            <span class="logo-item">WhatsApp Business</span>
+            <span class="logo-item">Google Calendar</span>
+            <span class="logo-item">Supabase</span>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="features-section" id="fitur">
+        <div class="section-eyebrow">Fitur</div>
+        <h2 class="section-title">Semua yang kamu butuhkan,<br><em>sudah tersedia</em></h2>
+        <p class="section-sub">Dirancang khusus untuk usaha kecil Indonesia yang ingin terlihat profesional tanpa
+            kerumitan teknis.</p>
+
+        <div class="features-grid">
+            <div class="feature-card accent">
+                <div class="feature-icon">📅</div>
+                <h3>Halaman booking publik</h3>
+                <p>Bagikan link jadwalmu ke pelanggan. Mereka bisa langsung pilih waktu, bayar, dan selesai — tanpa
+                    perlu WhatsApp bolak-balik.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💳</div>
+                <h3>Pembayaran QRIS & VA</h3>
+                <p>Terintegrasi Xendit. Pelanggan bayar via QRIS atau virtual account, dana langsung masuk ke rekening
+                    kamu.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Notifikasi WhatsApp otomatis</h3>
+                <p>Konfirmasi booking dan pengingat jadwal terkirim otomatis via WhatsApp. Kurangi no-show hingga 60%.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗓️</div>
+                <h3>Sinkronisasi Google Kalender</h3>
+                <p>Booking baru langsung muncul di Google Kalendermu. Bisa dilihat dari HP, laptop, atau mana saja.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>Multi-staf & kalender</h3>
+                <p>Punya lebih dari satu karyawan? Atur kalender per staf, hindari bentrokan jadwal, semua dalam satu
+                    dashboard.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🇮🇩</div>
+                <h3>Lokalisasi Indonesia</h3>
+                <p>Mendukung zona waktu WIB, WITA, WIT. Harga dalam Rupiah. Notifikasi dalam Bahasa Indonesia.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-section" id="cara-kerja">
+        <div class="how-inner">
+            <div class="section-eyebrow">Cara Kerja</div>
+            <h2 class="section-title">Dari daftar sampai<br><em>booking pertama</em> dalam menit</h2>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-num">01</div>
+                    <h3>Daftar & setup layanan</h3>
+                    <p>Buat akun, isi nama usaha, layanan yang ditawarkan, dan jam operasionalmu. Selesai dalam 10
+                        menit.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">02</div>
+                    <h3>Bagikan link booking</h3>
+                    <p>Kamu dapat link unik seperti <code
+                            style="font-size:12px;background:var(--border);padding:2px 6px;border-radius:4px;">njadwal.app/barberbudi</code>.
+                        Taruh di bio Instagram atau WhatsApp.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">03</div>
+                    <h3>Pelanggan pilih & bayar</h3>
+                    <p>Pelanggan pilih jadwal, isi nama, scan QRIS — selesai. Tidak perlu install app atau daftar akun.
+                    </p>
+                </div>
+                <div class="step">
+                    <div class="step-num">04</div>
+                    <h3>Notifikasi otomatis terkirim</h3>
+                    <p>Konfirmasi langsung masuk ke WhatsApp pelanggan, kalendermu terupdate otomatis. Kamu tinggal
+                        kerja.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing-section" id="harga">
+        <div class="section-eyebrow">Harga</div>
+        <h2 class="section-title">Harga <em>transparan,</em><br>tanpa biaya tersembunyi</h2>
+        <p class="section-sub">Mulai gratis, upgrade sesuai pertumbuhan usahamu.</p>
+
+        <div class="pricing-grid">
+            <!-- Solo -->
+            <div class="pricing-card">
+                <div class="plan-badge">Solo</div>
+                <div class="plan-price">Rp 99rb</div>
+                <div class="plan-period">per bulan</div>
+                <div class="plan-desc">Untuk usaha perorangan yang baru mulai digitalisasi booking.</div>
+                <ul class="plan-features">
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        1 kalender / 1 staf
+                    </li>
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        50 notifikasi WA / bulan
+                    </li>
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        QRIS & Virtual Account Xendit
+                    </li>
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        Sinkronisasi Google Kalender
+                    </li>
+                </ul>
+                <a href="/auth?signup=true" class="plan-cta plan-cta-outline">Mulai Sekarang</a>
+            </div>
+
+            <!-- Studio -->
+            <div class="pricing-card featured">
+                <div class="popular-tag">Paling Populer</div>
+                <div class="plan-badge">Studio</div>
+                <div class="plan-price" style="color:white;">Rp 199rb</div>
+                <div class="plan-period">per bulan</div>
+                <div class="plan-desc">Untuk studio atau salon dengan banyak karyawan.</div>
+                <ul class="plan-features">
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        Kalender multi-staf tak terbatas
+                    </li>
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        200 notifikasi WA / bulan
+                    </li>
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        Semua fitur Solo
+                    </li>
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        Dashboard admin per staf
+                    </li>
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        Prioritas support
+                    </li>
+                </ul>
+                <a href="/auth?signup=true" class="plan-cta plan-cta-solid">Mulai Sekarang</a>
+            </div>
+
+            <!-- Top Up -->
+            <div class="pricing-card">
+                <div class="plan-badge">Top Up WA</div>
+                <div class="plan-price">Rp 50rb</div>
+                <div class="plan-period">untuk 100 pesan WA</div>
+                <div class="plan-desc">Kuota WA habis di tengah bulan? Tambah kapan saja tanpa ganti paket.</div>
+                <ul class="plan-features">
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        Aktif langsung setelah bayar
+                    </li>
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        Tidak ada batas waktu pemakaian
+                    </li>
+                    <li>
+                        <svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="2,8 6,12 14,4" />
+                        </svg>
+                        Beli berkali-kali sesuai kebutuhan
+                    </li>
+                </ul>
+                <a href="/dashboard/topup" class="plan-cta plan-cta-outline">Top Up Sekarang</a>
+            </div>
+        </div>
+
+        <div class="topup-note" style="margin-top: 1.5rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <p><strong>Coba gratis 14 hari</strong> — tidak perlu kartu kredit. Batalkan kapan saja.</p>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="proof-section">
+        <div class="proof-inner">
+            <div class="section-eyebrow">Testimoni</div>
+            <h2 class="section-title">Dipercaya UMKM<br><em>dari Sabang sampai Merauke</em></h2>
+            <div class="proof-grid">
+                <div class="proof-card">
+                    <div class="proof-stars">★★★★★</div>
+                    <p class="proof-text">"Sebelumnya booking lewat DM Instagram, sering kelewat. Sekarang semua
+                        otomatis, pelanggan langsung dapat konfirmasi WA. No-show turun drastis."</p>
+                    <div class="proof-author">
+                        <div class="proof-av av-g">DS</div>
+                        <div>
+                            <div class="proof-name">Dian Susanti</div>
+                            <div class="proof-biz">Beauty Clinic Dian · Surabaya</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="proof-card">
+                    <div class="proof-stars">★★★★★</div>
+                    <p class="proof-text">"Setup-nya cepet banget, kurang dari setengah jam udah live. Link langsung
+                        saya taruh di bio IG, langsung ada yang booking. Simple dan profesional."</p>
+                    <div class="proof-author">
+                        <div class="proof-av av-b">RA</div>
+                        <div>
+                            <div class="proof-name">Raka Aditya</div>
+                            <div class="proof-biz">Raka Barbershop · Bandung</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="proof-card">
+                    <div class="proof-stars">★★★★★</div>
+                    <p class="proof-text">"Saya punya 4 terapis, dulu jadwal manual ribet banget. Sekarang masing-masing
+                        punya kalender sendiri, konflik jadwal nggak pernah terjadi lagi."</p>
+                    <div class="proof-author">
+                        <div class="proof-av av-o">NP</div>
+                        <div>
+                            <div class="proof-name">Novi Pratiwi</div>
+                            <div class="proof-biz">Studio Pijat Novi · Yogyakarta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-inner">
+            <h2>Siap buat usahamu lebih profesional?</h2>
+            <p>Bergabung dengan ratusan UMKM Indonesia yang sudah otomasi booking mereka dengan Njadwal.</p>
+            <div class="cta-buttons">
+                <a href="/auth?signup=true" class="btn-white">Mulai Gratis 14 Hari</a>
+                <a href="#cara-kerja" class="btn-outline-white">Lihat demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <span class="footer-logo">Njadwal<span>.</span></span>
+            <ul class="footer-links">
+                <li><a href="#">Fitur</a></li>
+                <li><a href="#">Harga</a></li>
+                <li><a href="#">Tentang</a></li>
+                <li><a href="#">Kebijakan Privasi</a></li>
+                <li><a href="#">Kontak</a></li>
+            </ul>
+            <span class="footer-copy">© 2025 Njadwal. Dibuat dengan ❤️ untuk Indonesia.</span>
+        </div>
+    </footer>
+
+    <script>
+        // Slot interactivity demo
+        document.querySelectorAll('.slot:not(.booked)').forEach(slot => {
+            slot.addEventListener('click', () => {
+                document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
+                slot.classList.add('active');
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            });
+        });
+    </script>
+</body>
+
+</html>
