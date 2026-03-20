@@ -50,6 +50,14 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                 .eq('merchant_id', mData.id)
             if (schData) setSchedule(schData)
 
+            // Fetch overrides
+            const { data: ovrData } = await supabase
+                .from('availability_overrides')
+                .select('*')
+                .eq('merchant_id', mData.id)
+
+            setMerchant({ ...mData, overrides: ovrData || [] })
+
             setLoading(false)
         }
 
@@ -128,6 +136,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                             merchantId={merchant.id}
                             duration={selectedService.duration_minutes}
                             schedule={schedule}
+                            overrides={merchant.overrides || []}
                             selectedDateTime={selectedDateTime}
                             onSelect={dt => setSelectedDateTime(dt)}
                         />

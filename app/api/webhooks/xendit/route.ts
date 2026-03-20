@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 import { parseBookingIdFromExternal } from '@/lib/xendit'
 
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   }
 
   const payload = await req.json()
-  const supabase = createClient()
+  const supabase = createAdminClient()
 
   if (payload.status === 'PAID') {
     // external_id = 'NJADWAL-{booking_id}'

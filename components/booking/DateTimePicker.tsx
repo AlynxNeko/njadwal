@@ -1,34 +1,52 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { format, addDays, startOfToday, parseISO, isSameDay } from 'date-fns'
+import { useState, useEffect, useMemo } from 'react'
+import {
+    format,
+    addDays,
+    startOfToday,
+    parseISO,
+    isSameDay,
+    startOfMonth,
+    endOfMonth,
+    startOfWeek,
+    endOfWeek,
+    addMonths,
+    subMonths,
+    eachDayOfInterval,
+    isSameMonth,
+    isToday,
+    isBefore
+} from 'date-fns'
 import { id } from 'date-fns/locale'
-import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2, Calendar as CalendarIcon } from 'lucide-react'
 
 export default function DateTimePicker({
     merchantId,
     duration,
     schedule,
+    overrides,
     selectedDateTime,
     onSelect
 }: {
     merchantId: string
     duration: number
     schedule: any[]
+    overrides?: any[]
     selectedDateTime: string | null
     onSelect: (datetime: string) => void
 }) {
+    const [viewDate, setViewDate] = useState<Date>(startOfToday())
     const [selectedDate, setSelectedDate] = useState<Date>(startOfToday())
     const [availableSlots, setAvailableSlots] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
-    const [dates, setDates] = useState<Date[]>([])
 
-    // Generate next 14 days
-    useEffect(() => {
-        const today = startOfToday()
-        const nextDates = Array.from({ length: 14 }).map((_, i) => addDays(today, i))
-        setDates(nextDates)
-    }, [])
+    // Generate days for the current view month
+    const days = useMemo(() => {
+        const start = startOfWeek(startOfMonth(viewDate))
+        const end = endOfWeek(endOfMonth(viewDate))
+        return eachDayOfInterval({ start, end })
+    }, [viewDate])
 
     useEffect(() => {
         if (!merchantId || !selectedDate) return
@@ -38,11 +56,28 @@ export default function DateTimePicker({
             setLoading(true)
             try {
                 const dateStr = format(selectedDate, 'yyyy-MM-dd')
-                const dayOfWeek = selectedDate.getDay()
+                const dayOfWeek = selectedDate.getDay() // 0 is Sunday, 1 is Monday
 
                 // Find if merchant is open
                 const daySchedule = schedule.find(s => s.day_of_week === dayOfWeek)
-                if (!daySchedule || !daySchedule.is_available) {
+                const override = overrides?.find(o => o.override_date === dateStr)
+
+                // If closed by override
+                if (override?.is_closed) {
+                    if (isMounted) setAvailableSlots([])
+                    return
+                }
+
+                // If not open by regular schedule and no override with custom hours
+                if (!daySchedule?.is_available && !override) {
+                    if (isMounted) setAvailableSlots([])
+                    return
+                }
+
+                const startTime = override?.start_time || daySchedule?.start_time
+                const endTime = override?.end_time || daySchedule?.end_time
+
+                if (!startTime || !endTime) {
                     if (isMounted) setAvailableSlots([])
                     return
                 }
@@ -53,10 +88,9 @@ export default function DateTimePicker({
                 const { booked_times } = await res.json()
 
                 // Generate slots
-                // This is a simplified slot generator. Realistically we'd account for duration and overlapping
                 const slots: string[] = []
-                const [startH, startM] = daySchedule.start_time.split(':').map(Number)
-                const [endH, endM] = daySchedule.end_time.split(':').map(Number)
+                const [startH, startM] = startTime.split(':').map(Number)
+                const [endH, endM] = endTime.split(':').map(Number)
 
                 let currentMins = startH * 60 + startM
                 const endMins = endH * 60 + endM
@@ -67,8 +101,6 @@ export default function DateTimePicker({
                     const timeSlot = `${h}:${m}`
 
                     // Check overlap with bookings
-                    // In a fully accurate system, we check if [currentMins, currentMins+duration] overlaps any booking.
-                    // For simplicity here, if the exact slot is in booked_times, we disable it.
                     if (!booked_times.includes(timeSlot)) {
                         slots.push(timeSlot)
                     }
@@ -86,67 +118,96 @@ export default function DateTimePicker({
 
         fetchAvailability()
         return () => { isMounted = false }
-    }, [merchantId, selectedDate, duration, schedule])
+    }, [merchantId, selectedDate, duration, schedule, overrides])
 
-    const moveDate = (days: number) => {
-        const newDate = addDays(selectedDate, days)
-        // Only allow within 14 days logic
-        const today = startOfToday()
-        const maxDate = addDays(today, 13)
-        if (newDate >= today && newDate <= maxDate) {
-            setSelectedDate(newDate)
-        }
-    }
+    const nextMonth = () => setViewDate(addMonths(viewDate, 1))
+    const prevMonth = () => setViewDate(subMonths(viewDate, 1))
 
     return (
-        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
-            <div className="p-4 border-b border-stone-100 flex items-center justify-between">
-                <h4 className="font-semibold text-stone-900 text-sm">Pilih Tanggal & Waktu</h4>
-                <div className="flex items-center gap-1">
-                    <button onClick={() => moveDate(-1)} className="p-1.5 text-stone-400 hover:text-teal-700 hover:bg-stone-50 rounded-lg"><ChevronLeft size={18} /></button>
-                    <button onClick={() => moveDate(1)} className="p-1.5 text-stone-400 hover:text-teal-700 hover:bg-stone-50 rounded-lg"><ChevronRight size={18} /></button>
+        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm transition-all duration-300">
+            <div className="p-4 border-b border-stone-100 flex items-center justify-between bg-stone-50/50">
+                <div className="flex items-center gap-2">
+                    <CalendarIcon className="text-teal-600" size={18} />
+                    <h4 className="font-semibold text-stone-900 text-sm">Pilih Tanggal</h4>
+                </div>
+                <div className="flex items-center gap-4">
+                    <span className="text-sm font-medium text-stone-700">
+                        {format(viewDate, 'MMMM yyyy', { locale: id })}
+                    </span>
+                    <div className="flex items-center gap-1">
+                        <button
+                            onClick={prevMonth}
+                            className="p-1.5 text-stone-400 hover:text-teal-700 hover:bg-white rounded-lg border border-stone-200"
+                        >
+                            <ChevronLeft size={16} />
+                        </button>
+                        <button
+                            onClick={nextMonth}
+                            className="p-1.5 text-stone-400 hover:text-teal-700 hover:bg-white rounded-lg border border-stone-200"
+                        >
+                            <ChevronRight size={16} />
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div className="p-4 bg-stone-50/50">
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 -mb-2 snap-x hide-scrollbar">
-                    {dates.map((d, i) => {
-                        const isSelected = isSameDay(d, selectedDate)
+            <div className="p-4 bg-white">
+                <div className="grid grid-cols-7 gap-1 mb-2">
+                    {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map((day) => (
+                        <div key={day} className="text-center text-[10px] font-bold text-stone-400 uppercase py-1">
+                            {day}
+                        </div>
+                    ))}
+                </div>
+                <div className="grid grid-cols-7 gap-1">
+                    {days.map((day, i) => {
+                        const isCurrentMonth = isSameMonth(day, viewDate)
+                        const isSelected = isSameDay(day, selectedDate)
+                        const isPast = isBefore(day, startOfToday())
+                        const today = isToday(day)
+
                         return (
                             <button
                                 key={i}
-                                onClick={() => setSelectedDate(d)}
-                                className={`flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-xl border min-w-[64px] snap-center transition-colors ${isSelected ? 'bg-teal-700 border-teal-700 text-white shadow-sm' : 'bg-white border-stone-200 text-stone-600 hover:border-stone-300'
-                                    }`}
+                                disabled={isPast}
+                                onClick={() => setSelectedDate(day)}
+                                className={`
+                                    relative h-11 flex flex-col items-center justify-center rounded-xl text-sm font-medium transition-all
+                                    ${!isCurrentMonth ? 'text-stone-300' : 'text-stone-700'}
+                                    ${isSelected ? 'bg-teal-700 text-white shadow-md scale-105 z-10' : 'hover:bg-teal-50 hover:text-teal-700'}
+                                    ${isPast ? 'opacity-30 cursor-not-allowed grayscale' : 'cursor-pointer'}
+                                    ${today && !isSelected ? 'ring-1 ring-teal-200' : ''}
+                                `}
                             >
-                                <span className={`text-[10px] font-medium uppercase mb-0.5 ${isSelected ? 'text-teal-100' : 'text-stone-400'}`}>
-                                    {format(d, 'EEE', { locale: id })}
-                                </span>
-                                <span className="text-lg font-semibold leading-none">
-                                    {format(d, 'dd')}
-                                </span>
+                                <span>{format(day, 'd')}</span>
+                                {today && !isSelected && (
+                                    <span className="absolute bottom-1 w-1 h-1 bg-teal-500 rounded-full"></span>
+                                )}
                             </button>
                         )
                     })}
                 </div>
             </div>
 
-            <div className="p-4 md:p-5">
+            <div className="p-4 md:p-5 border-t border-stone-100 bg-stone-50/30">
                 <div className="text-sm font-medium text-stone-600 mb-4 flex items-center justify-between">
-                    <span>{format(selectedDate, 'EEEE, dd MMMM yyyy', { locale: id })}</span>
-                    {loading && <Loader2 size={16} className="animate-spin text-stone-300" />}
+                    <div className="flex flex-col">
+                        <span className="text-xs text-stone-400 uppercase tracking-wider">Jam Tersedia</span>
+                        <span className="text-stone-900">{format(selectedDate, 'EEEE, dd MMMM', { locale: id })}</span>
+                    </div>
+                    {loading && <Loader2 size={16} className="animate-spin text-teal-600" />}
                 </div>
 
                 {loading ? (
                     <div className="grid grid-cols-3 gap-3">
-                        {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-10 bg-stone-100 animate-pulse rounded-xl"></div>)}
+                        {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-11 bg-stone-100 animate-pulse rounded-xl"></div>)}
                     </div>
                 ) : availableSlots.length === 0 ? (
-                    <div className="text-center py-8 text-stone-500 text-sm border border-stone-200 border-dashed rounded-xl bg-stone-50">
+                    <div className="text-center py-8 text-stone-500 text-sm border border-stone-200 border-dashed rounded-xl bg-white/80">
                         Penjadwalan penuh atau tidak tersedia pada hari ini.
                     </div>
                 ) : (
-                    <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-3 md:grid-cols-4 gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
                         {availableSlots.map((time, i) => {
                             const datetimeStr = `${format(selectedDate, 'yyyy-MM-dd')}T${time}:00`
                             const isSelected = selectedDateTime === datetimeStr
@@ -154,9 +215,9 @@ export default function DateTimePicker({
                                 <button
                                     key={i}
                                     onClick={() => onSelect(datetimeStr)}
-                                    className={`py-2 rounded-xl text-sm font-medium transition-all ${isSelected
-                                            ? 'bg-teal-700 border-teal-700 text-white ring-2 ring-teal-700 ring-offset-1'
-                                            : 'bg-white border border-stone-200 text-stone-700 hover:border-teal-600 hover:text-teal-700'
+                                    className={`py-3 rounded-xl text-sm font-semibold transition-all shadow-sm ${isSelected
+                                        ? 'bg-teal-700 border-teal-700 text-white ring-2 ring-teal-700 ring-offset-2 scale-[0.98]'
+                                        : 'bg-white border border-stone-200 text-stone-700 hover:border-teal-600 hover:text-teal-700 hover:shadow-md'
                                         }`}
                                 >
                                     {time}
@@ -166,11 +227,6 @@ export default function DateTimePicker({
                     </div>
                 )}
             </div>
-
-            <style jsx>{`
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
         </div>
     )
 }

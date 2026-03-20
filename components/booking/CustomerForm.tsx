@@ -52,12 +52,12 @@ export default function CustomerForm({ merchant, service, staff, date, time, onB
 
     if (data.is_free) {
       // Free service — confirm directly, go to success
-      router.push(`/book/${merchant.slug}/success?booking_id=${data.booking_id}`)
+      router.push(`/book/success?booking_id=${data.booking_id}`)
       return
     }
 
     // Paid service — go to checkout page with QRIS
-    router.push(`/book/${merchant.slug}/checkout?booking_id=${data.booking_id}`)
+    router.push(`/book/checkout?booking_id=${data.booking_id}`)
   }
 
   const parsedDate = new Date(`${date}T${time}`)

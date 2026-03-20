@@ -23,7 +23,7 @@ interface PaymentData {
   qr_image_url: string | null
   invoice_url: string
   expires_at: string
-  available_banks: Array<{ bank_code: string; account_holder_name: string; transfer_amount: number; bank_account_number: string }>
+  available_banks: Array<{ bank_code: string; account_holder_name: string; transfer_amount: number; bank_account_number?: string; account_number?: string }>
 }
 
 export default function QRISCheckout({
@@ -232,25 +232,33 @@ export default function QRISCheckout({
 
           {showVA && (
             <div className="mt-2 space-y-2">
-              {paymentData.available_banks.map(bank => (
-                <div key={bank.bank_code} className="flex items-center justify-between p-3.5 bg-white rounded-xl border border-stone-200">
-                  <div>
-                    <div className="text-xs font-semibold text-stone-700">{bank.bank_code}</div>
-                    <div className="text-sm font-mono text-stone-800 mt-0.5 tracking-wide">{bank.bank_account_number}</div>
-                    <div className="text-xs text-stone-400 mt-0.5">a.n. {bank.account_holder_name}</div>
+              {paymentData.available_banks.map(bank => {
+                const accNumber = (bank.bank_account_number || (bank as any).account_number) as string | undefined
+                return (
+                  <div key={bank.bank_code} className="flex items-center justify-between p-3.5 bg-white rounded-xl border border-stone-200">
+                    <div>
+                      <div className="text-xs font-semibold text-stone-700">{bank.bank_code}</div>
+                      {accNumber ? (
+                        <div className="text-sm font-mono text-stone-800 mt-0.5 tracking-wide">{accNumber}</div>
+                      ) : (
+                        <div className="text-xs text-stone-400 mt-1 italic">Nomor rekening tersedia di halaman pembayaran</div>
+                      )}
+                      <div className="text-xs text-stone-400 mt-0.5">a.n. {bank.account_holder_name}</div>
+                    </div>
+                    {accNumber && (
+                      <button
+                        onClick={() => copyVA(accNumber)}
+                        className={`text-xs px-3 py-1.5 rounded-lg transition-colors font-medium ${copiedVA === accNumber
+                          ? 'bg-teal-100 text-teal-700'
+                          : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                          }`}
+                      >
+                        {copiedVA === accNumber ? 'Disalin!' : 'Salin'}
+                      </button>
+                    )}
                   </div>
-                  <button
-                    onClick={() => copyVA(bank.bank_account_number)}
-                    className={`text-xs px-3 py-1.5 rounded-lg transition-colors font-medium ${
-                      copiedVA === bank.bank_account_number
-                        ? 'bg-teal-100 text-teal-700'
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
-                    }`}
-                  >
-                    {copiedVA === bank.bank_account_number ? 'Disalin!' : 'Salin'}
-                  </button>
-                </div>
-              ))}
+                )
+              })}
               <p className="text-xs text-stone-400 text-center pt-1">
                 Transfer tepat {formatRupiah(amountIdr)} — berbeda nominal tidak diproses
               </p>
