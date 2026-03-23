@@ -16,7 +16,10 @@ import {
     eachDayOfInterval,
     isSameMonth,
     isToday,
-    isBefore
+    isBefore,
+    isAfter,
+    addHours,
+    differenceInHours
 } from 'date-fns'
 import { id } from 'date-fns/locale'
 import { ChevronLeft, ChevronRight, Loader2, Calendar as CalendarIcon } from 'lucide-react'
@@ -27,6 +30,8 @@ export default function DateTimePicker({
     schedule,
     overrides,
     selectedDateTime,
+    noticePeriod = 4,
+    bookingWindow = 60,
     onSelect
 }: {
     merchantId: string
@@ -34,6 +39,8 @@ export default function DateTimePicker({
     schedule: any[]
     overrides?: any[]
     selectedDateTime: string | null
+    noticePeriod?: number
+    bookingWindow?: number
     onSelect: (datetime: string) => void
 }) {
     const [viewDate, setViewDate] = useState<Date>(startOfToday())
@@ -82,10 +89,10 @@ export default function DateTimePicker({
                     return
                 }
 
-                // Fetch booked times
+                // Fetch booked spans
                 const res = await fetch(`/api/bookings/availability?merchant_id=${merchantId}&date=${dateStr}`)
                 if (!res.ok) throw new Error('Gagal memuat jadwal')
-                const { booked_times } = await res.json()
+                const { booked_spans } = await res.json()
 
                 // Generate slots
                 const slots: string[] = []
@@ -100,11 +107,24 @@ export default function DateTimePicker({
                     const m = (currentMins % 60).toString().padStart(2, '0')
                     const timeSlot = `${h}:${m}`
 
-                    // Check overlap with bookings
-                    if (!booked_times.includes(timeSlot)) {
+                    // Check overlap with bookings AND notice period
+                    const now = new Date()
+                    const slotDateTime = parseISO(`${dateStr}T${timeSlot}:00`)
+                    const isWithinNotice = isBefore(slotDateTime, addHours(now, noticePeriod))
+
+                    const isOverlapping = (booked_spans || []).some((span: any) => {
+                        const [spanStartH, spanStartM] = span.start.split(':').map(Number)
+                        const [spanEndH, spanEndM] = span.end.split(':').map(Number)
+                        const spanStartMins = spanStartH * 60 + spanStartM
+                        const spanEndMins = spanEndH * 60 + spanEndM
+                        // General overlap check: (slotStart < spanEnd && slotEnd > spanStart)
+                        return currentMins < spanEndMins && (currentMins + duration) > spanStartMins
+                    })
+
+                    if (!isOverlapping && !isWithinNotice) {
                         slots.push(timeSlot)
                     }
-                    currentMins += Math.max(30, duration) // Step by 30 mins or duration
+                    currentMins += Math.min(15, duration) // Step by 15 mins or duration if smaller
                 }
 
                 if (isMounted) setAvailableSlots(slots)
@@ -164,18 +184,20 @@ export default function DateTimePicker({
                         const isCurrentMonth = isSameMonth(day, viewDate)
                         const isSelected = isSameDay(day, selectedDate)
                         const isPast = isBefore(day, startOfToday())
+                        const isOutsideWindow = isAfter(day, addDays(startOfToday(), bookingWindow))
+                        const isDisabled = isPast || isOutsideWindow
                         const today = isToday(day)
 
                         return (
                             <button
                                 key={i}
-                                disabled={isPast}
+                                disabled={isDisabled}
                                 onClick={() => setSelectedDate(day)}
                                 className={`
                                     relative h-11 flex flex-col items-center justify-center rounded-xl text-sm font-medium transition-all
                                     ${!isCurrentMonth ? 'text-stone-300' : 'text-stone-700'}
                                     ${isSelected ? 'bg-teal-700 text-white shadow-md scale-105 z-10' : 'hover:bg-teal-50 hover:text-teal-700'}
-                                    ${isPast ? 'opacity-30 cursor-not-allowed grayscale' : 'cursor-pointer'}
+                                    ${isDisabled ? 'opacity-30 cursor-not-allowed grayscale' : 'cursor-pointer'}
                                     ${today && !isSelected ? 'ring-1 ring-teal-200' : ''}
                                 `}
                             >

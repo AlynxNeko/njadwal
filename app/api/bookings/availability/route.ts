@@ -29,9 +29,10 @@ export async function GET(req: NextRequest) {
 
   const { data: bookings } = await query
 
-  const bookedTimes = (bookings || []).map(b =>
-    formatInTimeZone(new Date(b.start_time_utc), timezone, 'HH:mm')
-  )
+  const bookedSpans = (bookings || []).map(b => ({
+    start: formatInTimeZone(new Date(b.start_time_utc), timezone, 'HH:mm'),
+    end: formatInTimeZone(new Date(b.end_time_utc), timezone, 'HH:mm')
+  }))
 
-  return NextResponse.json({ booked_times: bookedTimes })
+  return NextResponse.json({ booked_spans: bookedSpans })
 }

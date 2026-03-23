@@ -132,14 +132,37 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                             <h2 className="text-lg font-semibold text-stone-900">Pilih Waktu</h2>
                         </div>
 
-                        <DateTimePicker
-                            merchantId={merchant.id}
-                            duration={selectedService.duration_minutes}
-                            schedule={schedule}
-                            overrides={merchant.overrides || []}
-                            selectedDateTime={selectedDateTime}
-                            onSelect={dt => setSelectedDateTime(dt)}
-                        />
+                        {(() => {
+                            let notice = 4
+                            let windowDays = 60
+                            if (selectedService) {
+                                notice = selectedService.notice_period_hours || 4
+                                windowDays = selectedService.booking_window_days || 60
+
+                                if (!selectedService.notice_period_hours && selectedService.description) {
+                                    try {
+                                        const parsed = JSON.parse(selectedService.description)
+                                        if (parsed?.rules) {
+                                            notice = parsed.rules.notice_period || notice
+                                            windowDays = parsed.rules.booking_window || windowDays
+                                        }
+                                    } catch (e) { }
+                                }
+                            }
+
+                            return (
+                                <DateTimePicker
+                                    merchantId={merchant.id}
+                                    duration={selectedService.duration_minutes}
+                                    schedule={schedule}
+                                    overrides={merchant.overrides || []}
+                                    selectedDateTime={selectedDateTime}
+                                    noticePeriod={notice}
+                                    bookingWindow={windowDays}
+                                    onSelect={dt => setSelectedDateTime(dt)}
+                                />
+                            )
+                        })()}
 
                         {selectedDateTime && (
                             <button
